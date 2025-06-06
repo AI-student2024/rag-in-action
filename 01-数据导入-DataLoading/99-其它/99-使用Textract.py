@@ -1,6 +1,8 @@
 import textract
-text = textract.process("data/黑悟空/黑神话悟空.pdf")
-print(text)
+
+text = textract.process("90-文档-Data/黑悟空/黑神话悟空.pdf")
+
+print(text.decode('utf-8'))
 
 # Textract 与 PyMuPDF、Unstructured 对比:
 

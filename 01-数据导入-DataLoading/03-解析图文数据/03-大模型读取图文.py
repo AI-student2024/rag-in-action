@@ -4,7 +4,10 @@ import os
 from openai import OpenAI
 
 # 初始化 OpenAI 客户端
-client = OpenAI()
+client = OpenAI(
+        api_key=os.getenv("DASHSCOPE_API_KEY"),
+        base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+)
 output_dir = "temp_images"
 
 # 1. PDF 转图片
@@ -20,7 +23,7 @@ for i, image in enumerate(images):
 print(f"成功转换 {len(image_paths)} 页")
 
 
-# 2. GPT-4o 分析图片
+# 2. qwen-vl-max 分析图片
 print("\n开始分析图片...")
 results = []
 for image_path in image_paths:
@@ -28,7 +31,7 @@ for image_path in image_paths:
         base64_image = base64.b64encode(image_file.read()).decode('utf-8')
     
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="qwen-vl-max",
         messages=[
             {
                 "role": "user",

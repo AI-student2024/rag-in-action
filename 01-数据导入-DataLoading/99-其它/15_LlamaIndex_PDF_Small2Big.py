@@ -1,5 +1,3 @@
-from llama_index.llms.openai import OpenAI
-from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.core import VectorStoreIndex, Settings
 from llama_index.readers.file import PDFReader
 from llama_index.core.node_parser import SentenceWindowNodeParser
@@ -10,10 +8,27 @@ from dotenv import load_dotenv
 load_dotenv()   
 
 import os
+from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.llms.deepseek.base import DeepSeek
 
 # Setup LLM and embedding models
-embed_model = OpenAIEmbedding(model="text-embedding-3-small")
-llm = OpenAI(model="gpt-3.5-turbo-0125")
+model_path = "/root/autodl-tmp/huggingface_cache/hub/models--BAAI--bge-m3"
+embed_model = HuggingFaceEmbedding(
+    model_name=model_path,
+    # 对于本地模型，通常不需要指定 device 或 local_files_only，
+    # 但为了与 LangChain 代码保持一致且确保本地加载，可以保留
+    model_kwargs={
+        "device": "cpu",
+        "local_files_only": True
+    }
+)
+llm = DeepSeek(
+    api_key=os.getenv("DEEPSEEK_API_KEY"),  # 从环境变量获取 API 密钥
+    model="deepseek-chat",  # 使用 deepseek-chat 模型
+    temperature=0,
+    max_tokens=1000,
+    timeout=60  # 设置超时时间为60秒
+)
 
 Settings.llm = llm
 Settings.embed_model = embed_model
@@ -28,7 +43,7 @@ node_parser = SentenceWindowNodeParser.from_defaults(
 
 # Load PDF and parse into nodes with sentence windows
 loader = PDFReader()
-documents = loader.load_data(file="data/PDF/uber_10q_march_2022.pdf")
+documents = loader.load_data(file="/root/autodl-tmp/rag-in-action/90-文档-Data/复杂PDF/uber_10q_march_2022.pdf")
 nodes = node_parser.get_nodes_from_documents(documents)
 
 # Create index from nodes

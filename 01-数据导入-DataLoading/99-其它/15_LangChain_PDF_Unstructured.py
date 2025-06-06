@@ -10,10 +10,10 @@ load_dotenv()
 
 # 初始化 OpenAI 模型
 embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
-llm = ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0)
+llm = ChatOpenAI(model="deepseek-v3", temperature=0)
 
 # 加载 PDF 文件
-loader = UnstructuredPDFLoader("data/PDF/uber_10q_march_2022.pdf")
+loader = UnstructuredPDFLoader("90-文档-Data/复杂PDF/uber_10q_march_2022.pdf")
 documents = loader.load()
 
 # 文本分割

@@ -1,4 +1,5 @@
-from llama_index.llms.openai import OpenAI
+from llama_index.llms.openai import OpenAI 
+from llama_index.llms.deepseek import DeepSeek
 from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.core import Settings
 from llama_parse import LlamaParse
@@ -10,7 +11,7 @@ load_dotenv()
 
 # 设置基础模型
 embed_model = OpenAIEmbedding(model="text-embedding-3-small")
-llm = OpenAI(model="gpt-3.5-turbo-0125")
+llm = DeepSeek(model="deepseek-v3")
 
 Settings.llm = llm
 Settings.embed_model = embed_model
@@ -22,7 +23,7 @@ pdf_path = "90-文档-Data/复杂PDF/billionaires_page-1-5.pdf"
 start_time = time.time()
 
 # 使用LlamaParse解析PDF
-documents = LlamaParse(result_type="markdown").load_data(pdf_path)
+documents = LlamaParse(result_type="markdown", api_key="llx-HXVbF4X7cegQD3hj1CIyxg4hl755jO5oGFDEYhJi7INXW2ez").load_data(pdf_path)
 
 # 记录结束时间
 end_time = time.time()

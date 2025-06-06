@@ -8,9 +8,28 @@ from dotenv import load_dotenv
 load_dotenv()   
 
 import os
+from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.llms.deepseek.base import DeepSeek
 
-embed_model = OpenAIEmbedding(model="text-embedding-3-small")
-llm = OpenAI(model="gpt-3.5-turbo-0125")
+
+# Setup LLM and embedding models
+model_path = "/root/autodl-tmp/huggingface_cache/hub/models--BAAI--bge-m3"
+embed_model = HuggingFaceEmbedding(
+    model_name=model_path,
+    # 对于本地模型，通常不需要指定 device 或 local_files_only，
+    # 但为了与 LangChain 代码保持一致且确保本地加载，可以保留
+    model_kwargs={
+        "device": "cpu",
+        "local_files_only": True
+    }
+)
+llm = DeepSeek(
+    api_key=os.getenv("DEEPSEEK_API_KEY"),  # 从环境变量获取 API 密钥
+    model="deepseek-chat",  # 使用 deepseek-chat 模型
+    temperature=0,
+    max_tokens=1000,
+    timeout=60  # 设置超时时间为60秒
+)
 
 Settings.llm = llm
 Settings.embed_model = embed_model
@@ -18,7 +37,7 @@ Settings.embed_model = embed_model
 # Load PDF using standard PDFReader
 loader = PDFReader()
 documents = loader.load_data(
-    file="data/PDF/uber_10q_march_2022.pdf"
+    file="90-文档-Data/复杂PDF/uber_10q_march_2022.pdf"
 )
 
 # Create index directly from documents
