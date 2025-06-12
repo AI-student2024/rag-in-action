@@ -47,7 +47,10 @@ questions = [
 ]
 
 print("\n===== 问答演示 =====")
+print("开始查询...")
 for question in questions:
+    print(f"正在处理问题: {question}")
     response = query_engine.query(question)
-    print(f"\n问题: {question}")
+    print(f"问题: {question}")
     print(f"回答: {response}")
+print("查询完成。")

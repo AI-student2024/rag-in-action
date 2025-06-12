@@ -7,11 +7,46 @@ from ragas.metrics import Faithfulness, AnswerRelevancy
 from ragas.llms import LangchainLLMWrapper
 from ragas.embeddings import LangchainEmbeddingsWrapper
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+from langchain_deepseek import ChatDeepSeek
 from langchain_huggingface import HuggingFaceEmbeddings
 from ragas import evaluate
 
-# 准备评估用的LLM（使用GPT-3.5）
-llm = LangchainLLMWrapper(ChatOpenAI(model_name="gpt-3.5-turbo"))
+
+
+# 设置环境变量
+os.environ["TRANSFORMERS_CACHE"] = "/root/autodl-tmp/huggingface_cache"
+os.environ["HF_HOME"] = "/root/autodl-tmp/huggingface_cache"
+os.environ["HF_DATASETS_CACHE"] = "/root/autodl-tmp/huggingface_cache"
+os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"  # 使用镜像
+os.environ["HF_HUB_OFFLINE"] = "1"  # 强制离线模式
+
+# 加载环境变量
+load_dotenv()
+
+# 初始化模型
+model_path = "/root/autodl-tmp/huggingface_cache/hub/models--BAAI--bge-m3"
+embeddings = HuggingFaceEmbeddings(
+    model_name=model_path,
+    model_kwargs={
+        "device": "cpu",
+        "local_files_only": True
+    }
+)
+
+# 初始化 DeepSeek 模型
+llm_model = ChatDeepSeek(
+    api_key=os.getenv("DEEPSEEK_API_KEY"),  # 从环境变量获取 API 密钥
+    model="deepseek-chat",  # 使用 deepseek-chat 模型
+    temperature=0,
+    max_tokens=1000,
+    timeout=60  # 设置超时时间为60秒
+)
+
+# 准备评估用的LLM（使用DeepSeek）
+llm = LangchainLLMWrapper(llm_model)
+
+
+
 
 # 准备数据集
 data = {
@@ -64,13 +99,13 @@ print(f"忠实度评分: {mean_score:.4f}")
 
 # 设置两种embedding模型
 opensource_embedding = LangchainEmbeddingsWrapper(
-    HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    embeddings=embeddings
 )
-openai_embedding = LangchainEmbeddingsWrapper(OpenAIEmbeddings(model="text-embedding-ada-002"))
+# openai_embedding = LangchainEmbeddingsWrapper(HuggingFaceEmbeddings(model_name="BAAI/bge-m3"))
 
 # 创建答案相关性评估指标
 opensource_relevancy = [AnswerRelevancy(llm=llm, embeddings=opensource_embedding)]
-openai_relevancy = [AnswerRelevancy(llm=llm, embeddings=openai_embedding)]
+# openai_relevancy = [AnswerRelevancy(llm=llm, embeddings=openai_embedding)]
 
 print("\n正在评估答案相关性...")
 print("\n使用开源Embedding模型评估:")
@@ -79,18 +114,18 @@ scores = opensource_result['answer_relevancy']
 opensource_mean = np.mean(scores) if isinstance(scores, (list, np.ndarray)) else scores
 print(f"相关性评分: {opensource_mean:.4f}")
 
-print("\n使用OpenAI Embedding模型评估:")
-openai_result = evaluate(dataset, openai_relevancy)
-scores = openai_result['answer_relevancy']
-openai_mean = np.mean(scores) if isinstance(scores, (list, np.ndarray)) else scores
-print(f"相关性评分: {openai_mean:.4f}")
+# print("\n使用OpenAI Embedding模型评估:")
+# openai_result = evaluate(dataset, openai_relevancy)
+# scores = openai_result['answer_relevancy']
+# openai_mean = np.mean(scores) if isinstance(scores, (list, np.ndarray)) else scores
+# print(f"相关性评分: {openai_mean:.4f}")
 
 # 比较两种embedding模型的结果
 print("\n=== Embedding模型比较 ===")
-diff = openai_mean - opensource_mean
-print(f"开源模型评分: {opensource_mean:.4f}")
-print(f"OpenAI模型评分: {openai_mean:.4f}")
-print(f"差异: {diff:.4f} ({'OpenAI更好' if diff > 0 else '开源模型更好' if diff < 0 else '相当'})")
+# diff = openai_mean - opensource_mean
+# print(f"开源模型评分: {opensource_mean:.4f}")
+# print(f"OpenAI模型评分: {openai_mean:.4f}")
+# print(f"差异: {diff:.4f} ({'OpenAI更好' if diff > 0 else '开源模型更好' if diff < 0 else '相当'})")
 
 
 '''

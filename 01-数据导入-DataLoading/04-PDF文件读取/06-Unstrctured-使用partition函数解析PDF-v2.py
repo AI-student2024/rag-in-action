@@ -2,7 +2,8 @@
 from unstructured.partition.auto import partition
 
 # 设置PDF文件路径
-filename = "90-文档-Data/黑悟空/黑神话悟空.pdf"
+# filename = "90-文档-Data/黑悟空/黑神话悟空.pdf"
+filename = "90-文档-Data/山西文旅/云冈石窟-ch.pdf"
 
 # 使用partition函数解析PDF文件
 # content_type指定文件类型为PDF

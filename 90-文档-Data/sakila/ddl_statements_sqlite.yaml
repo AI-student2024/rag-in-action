@@ -1,0 +1,62 @@
+actor: "CREATE TABLE actor (\n            actor_id INTEGER PRIMARY KEY AUTOINCREMENT,\n\
+  \            first_name TEXT NOT NULL,\n            last_name TEXT NOT NULL,\n \
+  \           last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n        )"
+address: "CREATE TABLE address (\n            address_id INTEGER PRIMARY KEY AUTOINCREMENT,\n\
+  \            address TEXT NOT NULL,\n            address2 TEXT,\n            district\
+  \ TEXT NOT NULL,\n            city_id INTEGER,\n            postal_code TEXT,\n\
+  \            phone TEXT NOT NULL,\n            last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n\
+  \        )"
+category: "CREATE TABLE category (\n            category_id INTEGER PRIMARY KEY AUTOINCREMENT,\n\
+  \            name TEXT NOT NULL,\n            last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n\
+  \        )"
+city: "CREATE TABLE city (\n            city_id INTEGER PRIMARY KEY AUTOINCREMENT,\n\
+  \            city TEXT NOT NULL,\n            country_id INTEGER,\n            last_update\
+  \ TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n        )"
+country: "CREATE TABLE country (\n            country_id INTEGER PRIMARY KEY AUTOINCREMENT,\n\
+  \            country TEXT NOT NULL,\n            last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n\
+  \        )"
+customer: "CREATE TABLE customer (\n            customer_id INTEGER PRIMARY KEY AUTOINCREMENT,\n\
+  \            store_id INTEGER,\n            first_name TEXT NOT NULL,\n        \
+  \    last_name TEXT NOT NULL,\n            email TEXT,\n            address_id INTEGER,\n\
+  \            active INTEGER DEFAULT 1,\n            create_date TIMESTAMP DEFAULT\
+  \ CURRENT_TIMESTAMP,\n            last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n\
+  \        )"
+film: "CREATE TABLE film (\n            film_id INTEGER PRIMARY KEY AUTOINCREMENT,\n\
+  \            title TEXT NOT NULL,\n            description TEXT,\n            release_year\
+  \ INTEGER,\n            language_id INTEGER,\n            original_language_id INTEGER,\n\
+  \            rental_duration INTEGER DEFAULT 3,\n            rental_rate REAL DEFAULT\
+  \ 4.99,\n            length INTEGER,\n            replacement_cost REAL DEFAULT\
+  \ 19.99,\n            rating TEXT DEFAULT 'G',\n            special_features TEXT,\n\
+  \            last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n        )"
+film_actor: "CREATE TABLE film_actor (\n            actor_id INTEGER,\n          \
+  \  film_id INTEGER,\n            last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n\
+  \            PRIMARY KEY (actor_id, film_id)\n        )"
+film_category: "CREATE TABLE film_category (\n            film_id INTEGER,\n     \
+  \       category_id INTEGER,\n            last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n\
+  \            PRIMARY KEY (film_id, category_id)\n        )"
+film_text: "CREATE TABLE film_text (\n            film_id INTEGER PRIMARY KEY,\n \
+  \           title TEXT NOT NULL,\n            description TEXT\n        )"
+inventory: "CREATE TABLE inventory (\n            inventory_id INTEGER PRIMARY KEY\
+  \ AUTOINCREMENT,\n            film_id INTEGER,\n            store_id INTEGER,\n\
+  \            last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n        )"
+language: "CREATE TABLE language (\n            language_id INTEGER PRIMARY KEY AUTOINCREMENT,\n\
+  \            name TEXT NOT NULL,\n            last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n\
+  \        )"
+payment: "CREATE TABLE payment (\n            payment_id INTEGER PRIMARY KEY AUTOINCREMENT,\n\
+  \            customer_id INTEGER,\n            staff_id INTEGER,\n            rental_id\
+  \ INTEGER,\n            amount REAL NOT NULL,\n            payment_date TIMESTAMP\
+  \ DEFAULT CURRENT_TIMESTAMP\n        )"
+rental: "CREATE TABLE rental (\n            rental_id INTEGER PRIMARY KEY AUTOINCREMENT,\n\
+  \            rental_date TIMESTAMP NOT NULL,\n            inventory_id INTEGER,\n\
+  \            customer_id INTEGER,\n            return_date TIMESTAMP,\n        \
+  \    staff_id INTEGER,\n            last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n\
+  \        )"
+staff: "CREATE TABLE staff (\n            staff_id INTEGER PRIMARY KEY AUTOINCREMENT,\n\
+  \            first_name TEXT NOT NULL,\n            last_name TEXT NOT NULL,\n \
+  \           address_id INTEGER,\n            email TEXT,\n            store_id INTEGER,\n\
+  \            active INTEGER DEFAULT 1,\n            username TEXT NOT NULL,\n  \
+  \          password TEXT,\n            last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n\
+  \        )"
+store: "CREATE TABLE store (\n            store_id INTEGER PRIMARY KEY AUTOINCREMENT,\n\
+  \            manager_staff_id INTEGER,\n            address_id INTEGER,\n      \
+  \      last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n        )"
